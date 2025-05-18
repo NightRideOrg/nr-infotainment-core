@@ -1,0 +1,36 @@
+# Build-Verzeichnisse
+build/
+CarContent/build/
+Generated/ # Falls dies wirklich generierte Dateien sind, die nicht versioniert werden sollen
+
+# CMake User Files
+CMakeUserPresets.json
+CMakePresets.json
+
+# Qt Creator / Qt Design Studio User Files
+*.pro.user*
+*.qmlproject.user*
+*.qtds # Oft benutzerspezifische Layouts etc. für Qt Design Studio
+*.autosave
+
+# IDE-spezifische Ordner
+.idea/
+.vscode/
+*.sublime-*
+
+# Betriebssystem-Dateien
+.DS_Store
+Thumbs.db
+
+# Kompilierte Bibliotheken und ausführbare Dateien (falls sie nicht im build-Ordner landen)
+*.so
+*.dll
+*.exe
+*.o
+*.a
+
+# Abhängigkeiten, die über coin o.ä. geladen werden (falls zutreffend und nicht versioniert werden sollen)
+# Dependencies/Components/coin/ # Überprüfe, ob hier Downloads landen, die ignoriert werden sollen
+
+# Log-Dateien
+*.log
