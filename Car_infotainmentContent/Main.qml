@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Effects
+import Qt5Compat.GraphicalEffects
 
 // Wichtig: Stellen Sie sicher, dass Qt Design Studio/Ihr Projekt Taskbar.qml finden kann.
 // Wenn Taskbar.qml im selben Ordner wie main.qml liegt, ist kein spezieller Import nötig.
@@ -13,46 +13,51 @@ Rectangle { // Oder Rectangle, wenn dies eine Komponente ist
     height: 1080 // Angepasst für Demozwecke
     visible: true
     color: "#a9a9a9"
-    /*
-    Rectangle {
-        id: rectangle
+
+    Image {
+        id: image
         x: 0
-        y: 911
+        y: 0
         width: 1920
-        height: 169
-        color: "#ffffff"
+        height: 1080
+        source: "../../Downloads/1239183-3840x2160-desktop-4k-green-forest-background-photo.jpg"
+        fillMode: Image.PreserveAspectCrop
     }
-    */
 
-
-    GroupItem {
-        x: -29
-        y: 878
-
-        Image {
-            id: image
-            x: 29
-            y: 0
+    Item {
+            id: taskbarBlurBackground
+            y: 920
             width: 1920
-            height: 257
-            source: "../../Downloads/1239183-3840x2160-desktop-4k-green-forest-background-photo.jpg"
-            fillMode: Image.PreserveAspectCrop
+            height: 160
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            // ShaderEffectSource für den Blur-Effekt
+            ShaderEffectSource {
+                id: effectSource
+                sourceItem: image  // Verweis auf das Hintergrundbild
+                anchors.fill: parent
+                sourceRect: Qt.rect(0, parent.parent.height - parent.height, parent.width, parent.height)
+                live: true
+            }
+
+            // FastBlur für den Blur-Effekt
+            FastBlur {
+                id: blur
+                anchors.fill: effectSource
+                source: effectSource
+                radius: 64  // Stärke des Blur-Effekts, anpassbar
+                cached: true
+            }
+
+            // Halbtransparentes Overlay für besseren Kontrast
+            Rectangle {
+                anchors.fill: parent
+                color: "#50000000"  // Schwarz mit 50% Opacity
+                opacity: 0.7
+            }
         }
 
-        MultiEffect {
-            x: 0
-            y: 0
-            source: image
-            autoPaddingEnabled: true
-            shadowEnabled: true
-            blurMultiplier: 1.6
-            width: 1970
-            height: 230
-            blurEnabled: true
-            blurMax: 15
-            blur: 1.7
-        }
-    }
 
     // Instanz Ihrer Taskleiste
 
