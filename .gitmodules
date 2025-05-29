@@ -1,0 +1,3 @@
+[submodule "pure-maps"]
+	path = pure-maps
+	url = https://github.com/MaizeShark/pure-maps/
