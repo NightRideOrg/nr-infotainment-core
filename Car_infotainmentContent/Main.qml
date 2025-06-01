@@ -382,8 +382,8 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                 Text {
                     id: volText
                     text: isNaN(volumeRoot.volume)
-                          ? "--"
-                          : Number(volumeRoot.volume).toFixed(0) + " %"
+                        ? "--"
+                        : Number(volumeRoot.volume).toFixed(0) + " %"
                     font.pixelSize: 38
                     color: "white"
                     font.bold: true
