@@ -1,13 +1,18 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Window
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
+import QtQuick3D
 
 // Wichtig: Stellen Sie sicher, dass Qt Design Studio/Ihr Projekt Taskbar.qml finden kann.
 // Wenn Taskbar.qml im selben Ordner wie main.qml liegt, ist kein spezieller Import nötig.
 // Ansonsten: import "./components" o.ä. und Taskbar.qml in den Ordner components legen.
 import QtQuick.Studio.Components 1.0
 import QtQuick.Studio.DesignEffects
+
+import QtQuick.Scene3D
+import "./3d"
 
 Window { // Oder Rectangle, wenn dies eine Komponente ist
     id: mainRoot
@@ -233,6 +238,55 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                     }
                 }
             }
+
+            Item {
+                anchors.fill: parent
+
+                Node {
+                    id: standAloneScene
+                    DirectionalLight { ambientColor: Qt.rgba(1.0, 1.0, 1.0, 1.0) }
+                    Node {
+                        id: node
+                        Model {
+                            id: model
+                            source: "#Cube"
+                            materials: [
+                                DefaultMaterial { diffuseColor: Qt.rgba(0.053, 0.130, 0.219, 1) }
+                            ]
+                        }
+                    }
+                    OrthographicCamera {
+                        id: cameraOrthographicFront
+                        y: 500; z: 1000
+                        lookAtNode: node
+                    }
+                }
+                View3D {
+                    anchors.fill: parent
+                    importScene: standAloneScene
+                    camera: cameraOrthographicFront
+                }
+                MouseArea {
+                    anchors.fill:parent
+                    property real pressedX
+                    property real pressedY
+                    onMouseXChanged: Qt.callLater(update)
+                    onMouseYChanged: Qt.callLater(update)
+                    onPressed: {
+                        [pressedX,pressedY] = [mouseX,mouseY];
+                    }
+                    function update() {
+                        let [dx,dy] = [mouseX - pressedX,mouseY - pressedY];
+                        [pressedX,pressedY] = [mouseX,mouseY];
+                        node.rotate(dx, Qt.vector3d(0, 1, 0), Node.SceneSpace);
+                        node.rotate(dy, Qt.vector3d(1, 0, 0), Node.SceneSpace);
+                    }
+                }
+
+                Item {
+                    id: __materialLibrary__
+                }
+            }
         }
     }
 
@@ -382,8 +436,8 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                 Text {
                     id: volText
                     text: isNaN(volumeRoot.volume)
-                        ? "--"
-                        : Number(volumeRoot.volume).toFixed(0) + " %"
+                          ? "--"
+                          : Number(volumeRoot.volume).toFixed(0) + " %"
                     font.pixelSize: 38
                     color: "white"
                     font.bold: true
@@ -488,3 +542,13 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
     }
 
 }
+
+
+
+
+
+/*##^##
+Designer {
+    D{i:0}D{i:27;cameraSpeed3d:25;cameraSpeed3dMultiplier:1}
+}
+##^##*/
