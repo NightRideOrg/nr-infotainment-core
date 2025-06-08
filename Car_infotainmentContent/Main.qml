@@ -189,12 +189,35 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                         id: chrome
                         property bool isCustom
                         property int fontSize: 12
+                        
+                        // Basisgröße definieren
+                        property int baseWidth: 800
+                        property int baseHeight: 600
+
+                        // Anpassung der Größe
+                        width: baseWidth
+                        height: baseHeight
+                        anchors.centerIn: parent
+
+                        // Berechnung der Skalierung nach Surface-Erstellung
+                        Connections {
+                            target: chrome.shellSurface
+                            function onSurfaceChanged() {
+                                if (chrome.shellSurface && chrome.shellSurface.surface) {
+                                    var surfaceSize = chrome.shellSurface.surface.size;
+                                    if (surfaceSize.width > 0 && surfaceSize.height > 0) {
+                                        chrome.baseWidth = surfaceSize.width;
+                                        chrome.baseHeight = surfaceSize.height;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Rest der chrome-Eigenschaften
                         onSurfaceDestroyed: {
-                            var index = itemList.indexOf(chrome)
+                            var index = comp.itemList.indexOf(chrome)
                             if (index > -1) {
-                                var listCopy = itemList
-                                listCopy.splice(index, 1)
-                                itemList = listCopy
+                                comp.itemList.splice(index, 1)
                             }
                             chrome.destroy()
                         }
@@ -256,15 +279,30 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
 
                 XdgShell {
                     onToplevelCreated: (toplevel, xdgSurface) => {
-                        // Clients werden jetzt innerhalb des compositorSurface platziert
-                        var item = chromeComponent.createObject(compositorSurface, { "shellSurface": xdgSurface } )
-                        var w = compositorSurface.width / 2
-                        var h = compositorSurface.height / 2
-                        item.x = Math.random() * w
-                        item.y = Math.random() * h
-                        var listCopy = itemList
-                        listCopy.push(item)
-                        itemList = listCopy
+                        // Ensure we have valid dimensions
+                        let windowWidth = Math.max(800, compositorSurface.width || 800);
+                        let windowHeight = Math.max(600, compositorSurface.height || 600);
+
+                        // Fallback if values are not set
+                        if (!windowWidth || isNaN(windowWidth)) windowWidth = 800;
+                        if (!windowHeight || isNaN(windowHeight)) windowHeight = 600;
+
+                        // Create Item
+                        var item = chromeComponent.createObject(compositorSurface, {
+                            "shellSurface": xdgSurface,
+                            "width": windowWidth,
+                            "height": windowHeight
+                        });
+
+                        comp.itemList.push(item);
+
+                        // Pass a QSize object (single argument)
+                        toplevel.sendConfigure(Qt.size(windowWidth, windowHeight));
+
+                        // Then activate fullscreen without parameters
+                        Qt.callLater(() => {
+                            toplevel.sendFullscreen();
+                        });
                     }
                 }
 
