@@ -283,10 +283,6 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                         let windowWidth = Math.max(800, compositorSurface.width || 800);
                         let windowHeight = Math.max(600, compositorSurface.height || 600);
 
-                        // Fallback if values are not set
-                        if (!windowWidth || isNaN(windowWidth)) windowWidth = 800;
-                        if (!windowHeight || isNaN(windowHeight)) windowHeight = 600;
-
                         // Create Item
                         var item = chromeComponent.createObject(compositorSurface, {
                             "shellSurface": xdgSurface,
