@@ -15,7 +15,8 @@ import io.qt.examples.customextension 1.0
 // Ansonsten: import "./components" o.ä. und Taskbar.qml in den Ordner components legen.
 // import QtQuick.Studio.Components 1.0
 // import QtQuick.Studio.DesignEffects
-import "qrc:/Generated/QtQuick3D/Volvi1"
+import Generated.QtQuick3D.Volvi
+
 
 Window { // Oder Rectangle, wenn dies eine Komponente ist
     id: mainRoot
@@ -493,7 +494,16 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
 
                 Node {
                     id: standAloneScene
-                    DirectionalLight { ambientColor: Qt.rgba(1.0, 1.0, 1.0, 1.0) }
+                    DirectionalLight {
+                        x: -0;
+                        y: 194.481;
+                        eulerRotation.z: 0.00002;
+                        eulerRotation.y: -0.00001;
+                        eulerRotation.x: -45.22048;
+                        z: 352.30603;
+                        brightness: 1;
+                        ambientColor: Qt.rgba(1.0, 1.0, 1.0, 1.0) }
+
                     Node {
                         id: node
                         /*Model {
@@ -506,18 +516,15 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                                 DefaultMaterial { diffuseColor: Qt.rgba(0.053, 0.130, 0.219, 1) }
                             ]
                         }*/
-                        Volvi1{
-                            x: 0
-                            y: 0
-                            scale.z: 100
-                            scale.y: 100
-                            scale.x: 100
-                            z: 0
+                        Volvi{
+                        x: 0
+                        y: 0
+                        z: 0
                         }
                     }
                     PerspectiveCamera {
                         id: cameraPerspectiveFront
-                        y: 500; z: 1000
+                        y: 250; z: 400
                         lookAtNode: node
                     }
                 }
@@ -525,6 +532,15 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                     anchors.fill: parent
                     importScene: standAloneScene
                     camera: cameraPerspectiveFront
+                    environment: SceneEnvironment {
+                        antialiasingMode: SceneEnvironment.MSAA
+                        tonemapMode: SceneEnvironment.TonemapModeFilmic
+                        backgroundMode: SceneEnvironment.SkyBox
+                        lightProbe: Texture {
+                            source: "qrc:/Images/urban_street_03_4k.hdr"
+                        }
+                    }
+
                 }
                 MouseArea {
                     anchors.fill:parent
@@ -539,7 +555,7 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                         let [dx,dy] = [mouseX - pressedX,mouseY - pressedY];
                         [pressedX,pressedY] = [mouseX,mouseY];
                         node.rotate(dx, Qt.vector3d(0, 1, 0), Node.SceneSpace);
-                        node.rotate(dy, Qt.vector3d(1, 0, 0), Node.SceneSpace);
+                        // node.rotate(dy, Qt.vector3d(1, 0, 0), Node.SceneSpace);
                     }
                 }
 
@@ -808,6 +824,7 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
 }
 /*##^##
 Designer {
-    D{i:0}D{i:47;cameraSpeed3d:25;cameraSpeed3dMultiplier:1}
+    D{i:0;matPrevEnvDoc:"SkyBox";matPrevEnvValueDoc:"preview_studio";matPrevModelDoc:"#Sphere"}
+D{i:47;cameraSpeed3d:16;cameraSpeed3dMultiplier:1}D{i:52;cameraSpeed3d:10;cameraSpeed3dMultiplier:1}
 }
 ##^##*/

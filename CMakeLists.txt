@@ -28,6 +28,8 @@ set(GEN_WAYLAND_SERVER_CPP_FILE ${CMAKE_CURRENT_BINARY_DIR}/qwayland-server-cust
 # Füge dies VOR qt_add_executable hinzu:
 qt_add_resources(QRC_SRCS resources.qrc)
 
+add_subdirectory(Generated)
+
 # 3. ERSTELLE DAS ZIEL (Executable) mit ALLEN Quellen
 qt_add_executable(Car_Infotainment
         src/main.cpp
@@ -82,4 +84,20 @@ set(TS_FILES
 qt_add_translations(Car_Infotainment
         PREFIX "translations"
         TS_FILES ${TS_FILES}
+)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/qml)
+set(QML_IMPORT_PATH ${QT_QML_OUTPUT_DIRECTORY}
+    CACHE STRING "Import paths for Qt Creator's code model"
+    FORCE
+)
+
+include(GNUInstallDirs)
+install(TARGETS Car_Infotainment
+  BUNDLE DESTINATION .
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
