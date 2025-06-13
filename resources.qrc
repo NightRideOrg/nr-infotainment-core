@@ -20,6 +20,6 @@
         <file>Car_infotainmentContent/icons/map.png</file>
         <file>Car_infotainmentContent/icons/placeholder.png</file>
         <file>Car_infotainmentContent/icons/app-drawer.png</file>
-        <file>Images/urban_street_03_4k.hdr</file>
+        <file>Car_infotainmentContent/images/urban_street_03_2k.hdr</file>
     </qresource>
 </RCC>

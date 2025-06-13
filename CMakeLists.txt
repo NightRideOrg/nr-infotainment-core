@@ -51,7 +51,8 @@ qt_add_executable(Car_Infotainment
         # Füge die generierten Dateien hier explizit hinzu
         ${GEN_WAYLAND_PROTOCOL_C_FILE}
         ${GEN_WAYLAND_SERVER_CPP_FILE}
-        ${QRC_SRCS} # <--- QRC-Dateien hier einfügen!
+        ${QRC_SRCS}
+        src/applauncher.h src/applauncher.cpp # <--- QRC-Dateien hier einfügen!
 )
 # 4. Erzeuge eine Regel, die die generierten Dateien als Abhängigkeit für das Ziel setzt
 #    Dies stellt sicher, dass sie generiert werden, BEVOR das Ziel versucht, sie zu kompilieren.

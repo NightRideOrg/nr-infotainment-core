@@ -17,6 +17,7 @@
 #include "volumeprovider.h"
 #include "climateprovider.h"
 #include "appprovider.h"
+#include "applauncher.h"
 
 int main(int argc, char *argv[])
 {
@@ -34,6 +35,9 @@ int main(int argc, char *argv[])
 
     // QML-Typ für CustomExtension registrieren (MUSS VOR engine.load() erfolgen!)
     qmlRegisterType<CustomExtension>("io.qt.examples.customextension", 1, 0, "CustomExtension");
+
+    AppLauncher launcher;
+    engine.rootContext()->setContextProperty("appLauncher", &launcher);
 
     LanguageManager* languageManager = new LanguageManager(&engine, &app);
     engine.rootContext()->setContextProperty("languageManager", languageManager);

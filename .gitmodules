@@ -1,3 +1,6 @@
 [submodule "pure-maps"]
 	path = pure-maps
 	url = https://github.com/MaizeShark/pure-maps/
+[submodule "PCB/Car-infotainment-PCB"]
+	path = PCB/Car-infotainment-PCB
+	url = http://github.com/MaizeShark/Car-infotainment-PCB

@@ -16,7 +16,7 @@ import io.qt.examples.customextension 1.0
 // import QtQuick.Studio.DesignEffects
 import Generated.QtQuick3D.Volvi
 
-Window { // Oder Rectangle, wenn dies eine Komponente ist
+Window {
     id: mainRoot
     width: 1920
     height: 1080 // Angepasst für Demozwecke
@@ -27,9 +27,12 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
     property int rpm: 7000
     property string rpmColor: "#ffffff"
     // property bool name: value
-    property bool turnL: true
-    property bool turnR: true
+    property bool turnL: false
+    property bool turnR: false
     property bool blinkState: false
+    property bool high_beam: false
+    property bool low_beam: false
+    property bool foglight: false
 
     Timer {
         id: blinkTimer
@@ -89,15 +92,6 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                     anchors.fill: parent
                     windowSystemCursorEnabled: !clientCursor.visible
 
-                    // Hintergrundbild für den Compositor-Bereich
-                    Image {
-                        id: background
-                        anchors.fill: parent
-                        fillMode: Image.Tile
-                        // KORREKTER PFAD zum Bild aus deiner resources.qrc
-                        source: "qrc:/Images/1239183-3840x2160-desktop-4k-green-forest-background-photo.jpg"
-                        smooth: true
-                    }
 
                     // Client-Mauszeiger
                     WaylandCursorItem {
@@ -105,82 +99,6 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                         x: mouseTracker.mouseX
                         y: mouseTracker.mouseY
                         seat: comp.defaultSeat // Verweis auf den defaultSeat des Compositors
-                    }
-
-                    // Seitenleiste zur Anzeige der Client-Fenster
-                    Rectangle {
-                        id: sidebar
-                        width: 250
-                        height: parent.height
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        color: "#AA202020" // Etwas dunkler für besseren Look
-                        radius: 10
-
-                        Column {
-                            anchors.fill: parent
-                            anchors.margins: 5
-                            spacing: 5
-
-                            Repeater {
-                                model: comp.itemList
-                                Rectangle {
-                                    height: 54
-                                    width: sidebar.width - 10
-                                    color: "#CCFFFFFF"
-                                    radius: 5
-                                    Text {
-                                        text: "window: " + modelData.shellSurface.toplevel.title + "\n[" + modelData.shellSurface.toplevel.appId + (modelData.isCustom ? "]\nfont size: " + modelData.fontSize : "]\nNo extension")
-                                        color: modelData.isCustom ? "black" : "darkgray"
-                                    }
-                                    MouseArea {
-                                        enabled: modelData.isCustom
-                                        anchors.fill: parent
-                                        onWheel: wheel => {
-                                            if (wheel.angleDelta.y > 0)
-                                                modelData.fontSize++;
-                                            else if (wheel.angleDelta.y < 0 && modelData.fontSize > 3)
-                                                modelData.fontSize--;
-                                        }
-                                        onDoubleClicked: {
-                                            comp.customExtension.close(modelData.surface);
-                                        }
-                                    }
-                                }
-                            }
-                            Text {
-                                visible: comp.itemList.length > 0
-                                width: sidebar.width - 10
-                                color: "white"
-                                text: "Mouse wheel to change font size. Double click to close"
-                                wrapMode: Text.Wrap
-                            }
-                        }
-                    }
-
-                    // Button zum Umschalten der Fensterdekoration
-                    Rectangle {
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                        anchors.margins: 10
-                        width: 100
-                        height: 100
-                        property bool on: true
-                        color: on ? "#DEC0DE" : "#FACADE"
-                        Text {
-                            anchors.fill: parent
-                            anchors.margins: 4
-                            text: "Toggle window decorations"
-                            wrapMode: Text.WordWrap
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                parent.on = !parent.on;
-                                comp.setDecorations(parent.on);
-                            }
-                        }
                     }
                 }
             }
@@ -535,9 +453,6 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
 
                 Node {
                     id: standAloneScene
-                    property bool turnL: false
-                    property bool turnR: false
-                    property bool blinkState: false
                     DirectionalLight {
                         x: -0
                         y: 194.481
@@ -574,6 +489,7 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                             shadowBias: 3
                             shadowFactor: 85
                             shadowMapFar: 1000
+                            visible: mainRoot.low_beam
                         }
 
                         SpotLight {
@@ -593,6 +509,7 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                             brightness: 1500
                             color: "#FFD1A3"
                             z: -207.28381
+                            visible: mainRoot.low_beam
                         }
                         SpotLight {
                             id: high_beam_L
@@ -609,6 +526,7 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                             shadowFactor: 75
                             shadowMapFar: 5000
                             brightness: 600
+                            visible: mainRoot.high_beam
                         }
                         SpotLight {
                             id: high_beam_R
@@ -625,6 +543,7 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                             shadowFactor: 75
                             shadowMapFar: 5000
                             brightness: 800
+                            visible: mainRoot.high_beam
                         }
                         SpotLight {
                             id: fog_lamps_L
@@ -641,6 +560,7 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                             shadowFactor: 75
                             shadowMapFar: 5000
                             brightness: 800
+                            visible: mainRoot.foglight
                         }
                         SpotLight {
                             id: fog_lamps_R
@@ -657,6 +577,7 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                             shadowFactor: 75
                             shadowMapFar: 5000
                             brightness: 600
+                            visible: mainRoot.foglight
                         }
 
                         SpotLight {
@@ -678,7 +599,7 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                             quadraticFade: 0.8
                             brightness: 280
                             z: -198
-                            visible: turnL && blinkState
+                            visible: mainRoot.turnL && mainRoot.blinkState
                             color: "#FFA500"
                         }
 
@@ -701,7 +622,7 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                             quadraticFade: 0.8
                             brightness: 280
                             z: -198
-                            visible: turnR && blinkState
+                            visible: mainRoot.turnR && mainRoot.blinkState
                             color: "#FFA500"
                         }
                     }
@@ -731,7 +652,9 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
                     camera: cameraPerspectiveFront
                     environment: ExtendedSceneEnvironment {
                         backgroundMode: SceneEnvironment.SkyBox
-                        lightProbe: Texture { source: "qrc:/Images/urban_street_03_4k.hdr" }
+                        lightProbe: Texture {
+                            source: "qrc:/Car_infotainmentContent/images/urban_street_03_2k.hdr"
+                        }
 
                         glowEnabled: true
                         glowStrength: 1.25
@@ -939,10 +862,22 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
         height: 100
 
         // Auf Signale reagieren
-        onDynamicIconClicked: (itemName, iconSource) => {
+        onDynamicIconClicked: function(itemName, iconSource) {
             console.log("MAIN: Dynamisches Icon geklickt: " + itemName + ", Quelle: " + iconSource);
-            // Hier könnten Sie z.B. eine App starten oder eine Ansicht wechseln
+
+            switch (itemName) {
+                case "pure-maps":
+                    appLauncher.launchApp("pure-maps")
+                    break;
+                case "spotify":
+                    appLauncher.launchApp("spotify")
+                    break;
+                default:
+                    console.warn("Unbekannter Item-Name: " + itemName);
+            }
         }
+
+
         onAppDrawerClicked: () => {
             console.log("MAIN: App Drawer wurde geklickt!");
             // Hier die Logik für den App Drawer implementieren
@@ -958,60 +893,47 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
         spacing: 10
 
         Button {
-            text: "Spotify hinzufügen"
+            text: "Blinker Rechts"
             onClicked: {
-                // Annahme: Sie haben Icons im qrc unter /app_icons/
-                myAppTaskbar.addIcon("Spotify", "qrc:/Car_infotainmentContent/icons/Spotify.png", "limegreen");
+                mainRoot.turnR = !mainRoot.turnR
             }
         }
         Button {
-            text: "Karten hinzufügen"
+            text: "Blinker Links"
             onClicked: {
-                myAppTaskbar.addIcon("Karten", "qrc:/Car_infotainmentContent/icons/map.png", "tomato");
+                mainRoot.turnL = !mainRoot.turnL
             }
         }
         Button {
-            text: "Spotify2 hinzufügen"
-            onClicked: {
-                myAppTaskbar.addIcon("Spotify2", "qrc:/Car_infotainmentContent/icons/map.png", "tomato");
-            }
+            text: "Nebel Licht"
+            onClicked: mainRoot.foglight = !mainRoot.foglight
         }
         Button {
-            text: "Spotify3 hinzufügen"
-            onClicked: {
-                myAppTaskbar.addIcon("Spotify3", "qrc:/Car_infotainmentContent/icons/map.png", "tomato");
-            }
+            text: "Fernlicht"
+            onClicked: mainRoot.high_beam = !mainRoot.high_beam
         }
         Button {
-            text: "Navigation hinzufügen"
-            onClicked: {
-                myAppTaskbar.addIcon("Navigation", "qrc:/Car_infotainmentContent/icons/placeholder.png", "dodgerblue");
-            }
+            text: "Abblendlicht"
+            onClicked: mainRoot.low_beam = !mainRoot.low_beam
         }
-        Button {
-            text: "Spotify entfernen"
-            onClicked: {
-                myAppTaskbar.removeIconByName("Spotify");
-            }
-        }
-        Button {
-            text: "Letztes dyn. Icon entfernen"
-            onClicked: {
-                myAppTaskbar.removeLastDynamicIcon();
-            }
-        }
-        Button {
-            text: "Entferne 1. dyn. Icon (Index 0)"
-            onClicked: {
-                myAppTaskbar.removeIconByIndex(0);
-            }
-        }
+
         TextField {
             id: appIdInput
             placeholderText: "App-ID eingeben (z. B. YouTube)"
             onAccepted: {
                 if (text.length > 0) {
                     appProvider.addApp(text, "qrc:/Car_infotainmentContent/icons/placeholder.png", "#FF0000");
+                } else {
+                    console.log("Bitte eine App-ID eingeben.");
+                }
+            }
+        }
+        TextField {
+            id: appappInput
+            placeholderText: "App-ID eingeben (z. B. YouTube)"
+            onAccepted: {
+                if (text.length > 0) {
+                    myAppTaskbar.addIcon(text, "qrc:/Car_infotainmentContent/icons/placeholder.png", "dodgerblue");
                 } else {
                     console.log("Bitte eine App-ID eingeben.");
                 }
@@ -1025,9 +947,3 @@ Window { // Oder Rectangle, wenn dies eine Komponente ist
         console.log("Test image URL:", testImage);
     }
 }
-/*##^##
-Designer {
-    D{i:0;matPrevEnvDoc:"SkyBox";matPrevEnvValueDoc:"preview_studio";matPrevModelDoc:"#Sphere"}
-D{i:48;cameraSpeed3d:19;cameraSpeed3dMultiplier:1}
-}
-##^##*/
