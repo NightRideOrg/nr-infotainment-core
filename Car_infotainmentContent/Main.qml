@@ -29,14 +29,14 @@ Window {
     // property bool name: value
     property bool turnL: false
     property bool turnR: false
-    property bool blinkState: false
+    property bool blinkState: true
     property bool high_beam: false
     property bool low_beam: false
     property bool foglight: false
 
     Timer {
         id: blinkTimer
-        interval: 330 // 1 second
+        interval: 330 // 1/3 second
         repeat: true
         onTriggered: {
             blinkState = !blinkState;
@@ -44,6 +44,7 @@ Window {
     }
     function updateBlinker() {
         if (turnL || turnR) {
+            blinkState = true;
             blinkTimer.start();
             console.log("Blinker started: turnL =", turnL, "turnR =", turnR);
         } else {
