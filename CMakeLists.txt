@@ -49,10 +49,6 @@ qt_add_qml_module(Car_Infotainment_App
     NO_RESOURCE_TARGET_PATH
 
     QML_FILES
-        Car_infotainment/Constants.qml
-        Car_infotainment/EventListModel.qml
-        Car_infotainment/EventListSimulator.qml
-
         Car_infotainmentContent/Main.qml
         Car_infotainmentContent/AppMenuGridView.qml
         Car_infotainmentContent/Climate.qml
@@ -62,7 +58,6 @@ qt_add_qml_module(Car_Infotainment_App
     # Moved conf and qmldir files here to fix CMake Warnings
     RESOURCES
         qtquickcontrols2.conf
-        Car_infotainment/qmldir
         Car_infotainmentContent/qmldir
 
         Abel/Abel-Regular.ttf
@@ -78,12 +73,6 @@ qt_add_qml_module(Car_Infotainment_App
         Car_infotainmentContent/icons/settings.svg
         Car_infotainmentContent/images/urban_street_03_2k.hdr
 )
-
-# ====================================================================
-#  4. WAYLAND PROTOCOL
-# ====================================================================
-set(PROTOCOL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/protocol/custom.xml)
-qt6_generate_wayland_protocol_server_sources(Car_Infotainment_App FILES ${PROTOCOL_FILE})
 
 # ====================================================================
 #  5. CONFIGURATION
