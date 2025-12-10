@@ -23,7 +23,6 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         version: '6.8.3'
-        modules: 'quick3d waylandcompositor'
 
     - name: Configure CMake
       run: cmake -B build -S .
