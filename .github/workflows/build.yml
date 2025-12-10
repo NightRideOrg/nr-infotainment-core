@@ -1,32 +1,103 @@
-name: C++ CI
+name: Cross-Platform Qt Build
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: "Linux (GCC)"
+            os: ubuntu-latest
+            modules: "qtwaylandcompositor qtquick3d qtshadertools qt5compat"
+            extra_deps: "libwayland-dev libvulkan-dev libgl1-mesa-dev"
+            generators: "Ninja"
+
+          - name: "Windows (MSVC)"
+            os: windows-latest
+            # Wayland is not supported on Windows, so we exclude it here
+            modules: "qtquick3d qtshadertools qt5compat"
+            extra_deps: ""
+            generators: "Ninja"
+
+          - name: "macOS (Clang)"
+            os: macos-latest
+            # Wayland is not supported on macOS
+            modules: "qtquick3d qtshadertools qt5compat"
+            extra_deps: ""
+            generators: "Ninja"
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libvulkan-dev libwayland-dev
+      # --- 1. Environment Prep ---
+      - name: Install Ninja & Tools
+        uses: package-management/install-ninja-dependency-action@v1
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v3
-      with:
-        version: '6.8.3'
-        modules: 'qtwaylandcompositor qtquick3d qtshadertools qt5compat'
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential ${{ matrix.config.extra_deps }}
 
-    - name: Configure CMake
-      run: cmake -DQt6_DIR=/home/runner/work/Car_Infotainment/Qt/6.8.3/gcc_64/lib/cmake/Qt6 -B build -S .
+      # --- 2. Compiler Caching ---
+      - name: Setup Compiler Cache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ matrix.config.os }}-${{ matrix.config.name }}
 
-    - name: Build
-      run: cmake --build build
+      # --- 3. Install Qt ---
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.8.3'
+          cache: true
+          aqtversion: '==3.1.*'
+          modules: ${{ matrix.config.modules }}
+
+      # --- 4. Configure ---
+      # We define CMAKE_INSTALL_PREFIX to a local folder named "staged"
+      # This tells CMake where to put the final files when we run --install
+      - name: Configure CMake
+        run: >
+          cmake -S . -B build
+          -G "${{ matrix.config.generators }}"
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/staged
+          -DCMAKE_C_COMPILER_LAUNCHER=ccache
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      # --- 5. Build ---
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      # --- 6. Test ---
+      - name: Run Tests
+        run: ctest --test-dir build -C Release --output-on-failure
+
+      # --- 7. Deployment (The "Non Plus Ultra" Step) ---
+      # This triggers the 'install' logic in your CMakeLists.txt.
+      # On Windows/Mac, this runs windeployqt/macdeployqt automatically.
+      - name: Install & Deploy
+        run: cmake --install build --config Release
+
+      # --- 8. Upload Artifacts ---
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CarInfotainment-${{ matrix.config.os }}
+          # We upload the 'staged' folder which contains the clean, deployed app
+          path: staged/
