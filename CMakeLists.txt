@@ -1,33 +1,36 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.22)
 
 project(Car_Infotainment VERSION 1.0 LANGUAGES CXX C)
 
+# ====================================================================
+#  1. GLOBAL SETTINGS
+# ====================================================================
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 COMPONENTS
+# Enable CTest integration for the CI
+enable_testing()
+
+find_package(Qt6 6.5 COMPONENTS
     Core Gui Qml Quick Quick3D
     WaylandCompositor LinguistTools Core5Compat
     REQUIRED
 )
 
 qt_standard_project_setup()
-
-# Fixes the QTP0004 warning
 qt_policy(SET QTP0004 NEW)
 
 # ====================================================================
-#  1. ASSETS
+#  2. DEPENDENCIES & ASSETS
 # ====================================================================
+# Assumes this directory exports 'Generated_QtQuick3D_Volvi'
 add_subdirectory(Generated)
 
 # ====================================================================
-#  2. EXECUTABLE
+#  3. SOURCE FILES
 # ====================================================================
-qt_add_executable(Car_Infotainment_App
+set(PROJECT_SOURCES
     src/main.cpp
-
-    # C++ Logic
     src/applauncher.cpp   src/applauncher.h
     src/appprovider.cpp   src/appprovider.h
     src/climateprovider.cpp src/climateprovider.h
@@ -37,15 +40,36 @@ qt_add_executable(Car_Infotainment_App
 )
 
 # ====================================================================
-#  3. QT 6 QML MODULE
+#  4. EXECUTABLE
+# ====================================================================
+# WIN32: Hides the command prompt on Windows
+# MACOSX_BUNDLE: Creates a proper .app bundle on macOS
+qt_add_executable(Car_Infotainment_App
+    MANUAL_FINALIZATION
+    WIN32
+    MACOSX_BUNDLE
+    ${PROJECT_SOURCES}
+)
+
+# ====================================================================
+#  5. COMPILER WARNINGS (CI Best Practice)
+# ====================================================================
+# Ensure code quality by turning on warnings
+if(MSVC)
+    target_compile_options(Car_Infotainment_App PRIVATE /W4)
+else()
+    target_compile_options(Car_Infotainment_App PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+# ====================================================================
+#  6. QT 6 QML MODULE
 # ====================================================================
 qt_add_qml_module(Car_Infotainment_App
     URI "Car_Infotainment"
     VERSION 1.0
     RESOURCE_PREFIX "/"
 
-    # CRITICAL FIX: This prevents CMake from adding "/Car_Infotainment"
-    # to your file paths. Now "qrc:/Car_infotainmentContent/Main.qml" will work.
+    # Keeps your path logic flat as requested
     NO_RESOURCE_TARGET_PATH
 
     QML_FILES
@@ -55,13 +79,12 @@ qt_add_qml_module(Car_Infotainment_App
         Car_infotainmentContent/Taskbar.qml
         Car_infotainmentContent/Settings.qml
 
-    # Moved conf and qmldir files here to fix CMake Warnings
     RESOURCES
         qtquickcontrols2.conf
         Car_infotainmentContent/qmldir
-
         Abel/Abel-Regular.ttf
-        Images/1239183-3840x2160-desktop-4k-green-forest-background-photo.jpg
+        # Note: Ideally, avoid spaces in filenames for cross-platform safety
+        "Images/1239183-3840x2160-desktop-4k-green-forest-background-photo.jpg"
         Images/pure-maps2.png
         Images/pure-maps.png
         Car_infotainmentContent/icons/fan.png
@@ -75,7 +98,7 @@ qt_add_qml_module(Car_Infotainment_App
 )
 
 # ====================================================================
-#  5. CONFIGURATION
+#  7. LINKING & INCLUDE
 # ====================================================================
 target_include_directories(Car_Infotainment_App PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -89,15 +112,34 @@ target_link_libraries(Car_Infotainment_App PRIVATE
 )
 
 # ====================================================================
-#  6. TRANSLATIONS & INSTALL
+#  8. TRANSLATIONS
 # ====================================================================
 qt_add_translations(Car_Infotainment_App PREFIX "translations" TS_FILES translations/app_de.ts)
 
-set(QML_IMPORT_PATH ${CMAKE_BINARY_DIR}/qml CACHE STRING "" FORCE)
-
+# ====================================================================
+#  9. INSTALLATION & DEPLOYMENT (The Magic Part)
+# ====================================================================
 include(GNUInstallDirs)
+
+# 1. Standard Install
 install(TARGETS Car_Infotainment_App
     BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
+
+# 2. Automated Deployment (windeployqt / macdeployqt)
+# This generates a script that runs during 'cmake --install'
+# It automatically copies required Qt DLLs/Plugins to the build folder
+# so the Artifact uploaded by GitHub Actions actually runs!
+if(WIN32 OR APPLE)
+    qt_generate_deploy_app_script(
+        TARGET Car_Infotainment_App
+        OUTPUT_SCRIPT deploy_script
+        NO_UNSUPPORTED_PLATFORM_ERROR
+    )
+    install(SCRIPT ${deploy_script})
+endif()
+
+# Finalize the target (required because we used MANUAL_FINALIZATION)
+qt_finalize_executable(Car_Infotainment_App)
