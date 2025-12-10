@@ -31,11 +31,7 @@ make -j$(nproc)
 
 ## Running the Application
 
-For X11/Wayland compatibility:
-
 ```bash
-QT_XCB_GL_INTEGRATION=xcb_egl \
-QT_WAYLAND_CLIENT_BUFFER_INTEGRATION=xcomposite-egl \
 ./Car_Infotainment_App
 ```
 
@@ -72,4 +68,5 @@ For example:
 
 * The background image must have a **minimum resolution of 1920×1080 pixels**.
 * The image will be **cropped while preserving its aspect ratio**.
+
 
