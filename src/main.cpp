@@ -15,6 +15,9 @@
 #include "appprovider.h"
 #include "applauncher.h"
 #include "settingsProvider.h"
+#include "DatabaseManager.h"
+#include "ProgramModel.h"
+#include "sdr/rtlsdr.h"
 
 int main(int argc, char *argv[])
 {
@@ -38,6 +41,10 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     qDebug() << "QML Engine created.";
 
+    DatabaseManager* dbManager = new DatabaseManager(&app);
+    dbManager->connect();
+    engine.rootContext()->setContextProperty("dbManager", dbManager);
+
     SettingsProvider* settingsProvider = new SettingsProvider(&app);
     engine.rootContext()->setContextProperty("settingsProvider", settingsProvider);
 
@@ -56,11 +63,20 @@ int main(int argc, char *argv[])
     AppProvider* appProvider = new AppProvider(&app);
     engine.rootContext()->setContextProperty("appProvider", appProvider);
 
+    RtlSdr *radio = new RtlSdr(&app);
+
+    QObject::connect(radio, &RtlSdr::rdsDataAvailable,
+                     dbManager, &DatabaseManager::processRdsJson);
+
+    radio->startRadio(105.9);
+
     appProvider->addApp("Map", "qrc:/Car_infotainmentContent/icons/map.png", "red");
     appProvider->addApp("Spotify", "qrc:/Car_infotainmentContent/icons/Spotify.png", "limegreen");
     appProvider->addApp("Settings", "qrc:/Car_infotainmentContent/icons/settings.svg", "grey");
 
     languageManager->setCurrentLanguage("de");
+
+    qmlRegisterType<ProgramModel>("Main", 1, 0, "ProgramModel");
 
     const QUrl url(QStringLiteral("qrc:/Car_infotainmentContent/Main.qml"));
 
@@ -76,6 +92,5 @@ int main(int argc, char *argv[])
         qDebug() << "Fehler: Keine Root-Objekte in QML geladen!";
         return -1;
     }
-
     return app.exec();
 }

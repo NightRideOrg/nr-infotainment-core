@@ -56,11 +56,8 @@ Window {
 
     Image {
         id: image
-        x: 0
-        y: 0
-        width: 1920
-        height: 1080
         source: "qrc:/Images/1239183-3840x2160-desktop-4k-green-forest-background-photo.jpg"
+        anchors.fill: parent
         fillMode: Image.PreserveAspectCrop
     }
 
@@ -739,6 +736,9 @@ Window {
             case "settings":
                 settings.visible = !settings.visible
                 break
+            case "database":
+                database_t.visible = !database_t.visible
+                break
             default:
                 console.warn("Unbekannter Item-Name: " + itemName)
             }
@@ -819,6 +819,15 @@ Window {
 
     Settings {
         id: settings
+        visible: false
+        anchors.right: parent.right
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+    }
+
+    Databasetest {
+        id: database_t
         visible: false
         anchors.right: parent.right
         anchors.left: parent.left

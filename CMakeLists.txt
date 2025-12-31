@@ -11,11 +11,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Enable CTest integration for the CI
 enable_testing()
 
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
+
 find_package(Qt6 6.5 COMPONENTS
-    Core Gui Qml Quick Quick3D
+    Core Gui Network Qml Quick Quick3D Sql
     WaylandCompositor LinguistTools Core5Compat
     REQUIRED
 )
+
+find_package(LibRTLSDR REQUIRED)
 
 qt_standard_project_setup()
 qt_policy(SET QTP0004 NEW)
@@ -37,6 +41,9 @@ set(PROJECT_SOURCES
     src/languagemanager.cpp src/languagemanager.h
     src/settingsProvider.cpp src/settingsProvider.h
     src/volumeprovider.cpp src/volumeprovider.h
+    src/DatabaseManager.h src/DatabaseManager.cpp
+    src/ProgramModel.h src/ProgramModel.cpp
+    src/sdr/rtlsdr.h src/sdr/rtlsdr.cpp
 )
 
 # ====================================================================
@@ -78,6 +85,7 @@ qt_add_qml_module(Car_Infotainment_App
         Car_infotainmentContent/Climate.qml
         Car_infotainmentContent/Taskbar.qml
         Car_infotainmentContent/Settings.qml
+        Car_infotainmentContent/Databasetest.qml
 
     RESOURCES
         qtquickcontrols2.conf
@@ -96,17 +104,17 @@ qt_add_qml_module(Car_Infotainment_App
         Car_infotainmentContent/icons/settings.svg
         Car_infotainmentContent/images/urban_street_03_2k.hdr
 )
-
 # ====================================================================
 #  7. LINKING & INCLUDE
 # ====================================================================
 target_include_directories(Car_Infotainment_App PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${LIBRTLSDR_INCLUDE_DIRS}
 )
 
 target_link_libraries(Car_Infotainment_App PRIVATE
-    Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::Quick3D
+    Qt6::Core Qt6::Gui Qt6::Qml Qt6::Network Qt6::Quick Qt6::Quick3D Qt6::Sql
     Qt6::Core5Compat Qt6::WaylandCompositor
     Generated_QtQuick3D_Volvi
 )
