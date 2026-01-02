@@ -31,6 +31,20 @@ Rectangle {
             }
         }
 
+        RowLayout {
+            Layout.fillWidth: true
+            Slider {
+                from: 87.5
+                value: 105.9
+                to: 108
+                Layout.fillWidth: true
+            }
+            TextField {
+                placeholderText: "Frequency"
+                Layout.fillWidth: true
+            }
+        }
+
         // 2. The List (FIXED ANCHORS HERE)
         ListView {
             id: mainListView
