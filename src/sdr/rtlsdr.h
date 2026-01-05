@@ -12,8 +12,9 @@ public:
     explicit RtlSdr(QObject *parent = nullptr);
     ~RtlSdr();
 
-    void startRadio(double freqMhz);
-    void stopRadio();
+    Q_INVOKABLE void startRadio(double freqMhz);
+    // Q_INVOKABLE void playUrl(QString url);
+    Q_INVOKABLE void stopRadio();
 
 signals:
     // CHANGED: We now send the frequency (in Hz) along with the JSON

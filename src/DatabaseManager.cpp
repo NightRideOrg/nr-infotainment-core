@@ -120,13 +120,28 @@ void DatabaseManager::processRdsJson(const QString &jsonString, int frequencyHz)
     upsertFrequency(piStr, freqKhz, 20, 20);
 
     // 4. Handle AF (Alternative Frequencies)
+    QJsonArray afList;
+
+    // Method A: Direct array
     if (obj.contains("alt_frequencies_a")) {
-        QJsonArray afList = obj["alt_frequencies_a"].toArray();
-        for (const QJsonValue &val : std::as_const(afList)) {
-            int afFreqKhz = val.toInt();
-            if (afFreqKhz > 0) {
-                upsertFrequency(piStr, afFreqKhz, 0, 0);
-            }
+        afList = obj["alt_frequencies_a"].toArray();
+    }
+    // Method B: Nested object (alt_frequencies_b -> same_programme)
+    else if (obj.contains("alt_frequencies_b")) {
+        QJsonObject afB = obj["alt_frequencies_b"].toObject();
+        if (afB.contains("same_programme")) {
+            afList = afB["same_programme"].toArray();
+        }
+    }
+
+    // Process whichever list was found
+    for (const QJsonValue &val : std::as_const(afList)) {
+        int afFreqKhz = val.toInt();
+        // Zero check prevents invalid frequencies
+        if (afFreqKhz > 0) {
+            // upsert with 0 RSSI/SNR to indicate we know the freq exists
+            // but we aren't currently tuned to it
+            upsertFrequency(piStr, afFreqKhz, 0, 0);
         }
     }
 }

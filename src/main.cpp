@@ -7,8 +7,8 @@
 #include <QtQml/qqml.h>
 #include <QtQml/QQmlEngine>
 #include <QtGui/QSurfaceFormat>
+#include <cstdlib>
 
-// #include "customextension.h"
 #include "languagemanager.h"
 #include "volumeprovider.h"
 #include "climateprovider.h"
@@ -18,11 +18,12 @@
 #include "DatabaseManager.h"
 #include "ProgramModel.h"
 #include "sdr/rtlsdr.h"
+#include "vlcplayer.h"
+#include "internet_radio.h"
 
 int main(int argc, char *argv[])
 {
     qputenv("QT_XCB_GL_INTEGRATION", "xcb_egl");
-    // Enable context sharing (Required for QtQuick3D + Wayland)
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts, true);
 
     QSurfaceFormat format;
@@ -36,10 +37,16 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("MaizeShark");
     QCoreApplication::setOrganizationDomain("maizeshark.com");
     QCoreApplication::setApplicationName("CarInfotainmentApp");
-    qDebug() << "App info set.";
+
+    qmlRegisterType<VlcPlayer>("Car.Multimedia", 1, 0, "VlcPlayer");
 
     QQmlApplicationEngine engine;
-    qDebug() << "QML Engine created.";
+
+    // --- Instantiate Internet Radio Class ---
+    // This will automatically find the fastest server in its constructor
+    InternetRadio* internetRadio = new InternetRadio(&app);
+    // Expose to QML as "internetRadio"
+    engine.rootContext()->setContextProperty("internetRadio", internetRadio);
 
     DatabaseManager* dbManager = new DatabaseManager(&app);
     dbManager->connect();
@@ -64,14 +71,12 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("appProvider", appProvider);
 
     RtlSdr *radio = new RtlSdr(&app);
-
     QObject::connect(radio, &RtlSdr::rdsDataAvailable,
                      dbManager, &DatabaseManager::processRdsJson);
-
-    radio->startRadio(105.9);
+    engine.rootContext()->setContextProperty("sdrRadio", radio);
 
     appProvider->addApp("Map", "qrc:/Car_infotainmentContent/icons/map.png", "red");
-    appProvider->addApp("Spotify", "qrc:/Car_infotainmentContent/icons/Spotify.png", "limegreen");
+    appProvider->addApp("Spotify", "qrc:/Car_infotainmentContent/icons/Spotify.svg", "limegreen");
     appProvider->addApp("Settings", "qrc:/Car_infotainmentContent/icons/settings.svg", "grey");
 
     languageManager->setCurrentLanguage("de");

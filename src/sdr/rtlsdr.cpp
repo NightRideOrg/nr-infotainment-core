@@ -18,6 +18,7 @@ void RtlSdr::startRadio(double freqMhz)
 
     QString program = "/bin/bash";
     // Using 171k sample rate for RDS decoding
+    // rtl_fm -f $freq -s 171k - | tee >(play -t raw -r 171k -e s -b 16 -c 1 -V1 -q -) | redsea -r 171k
     QString command = QString(
                           "rtl_fm -f %1M -s 171k - | "
                           "tee >(play -t raw -r 171k -e s -b 16 -c 1 -V1 -q -) | "
@@ -48,3 +49,26 @@ void RtlSdr::handleReadyRead()
         emit rdsDataAvailable(text, m_currentFrequencyHz);
     }
 }
+
+/*
+void RtlSdr::playUrl(QString url)
+{
+
+    stopRadio();
+
+    // Store frequency as Hz (integer) for the signal later
+    m_currentFrequencyHz = static_cast<int>(freqMhz * 1000000);
+
+    QString program = "/bin/bash";
+    // Using 171k sample rate for RDS decoding
+    QString command = QString(
+                          "rtl_fm -f %1M -s 171k - | "
+                          "tee >(play -t raw -r 171k -e s -b 16 -c 1 -V1 -q -) | "
+                          "redsea -r 171k"
+                          ).arg(freqMhz);
+
+    QStringList arguments;
+    arguments << "-c" << command;
+    m_process->start(program, arguments);
+}
+*/

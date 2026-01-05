@@ -33,17 +33,44 @@ Rectangle {
 
         RowLayout {
             Layout.fillWidth: true
+
             Slider {
+                id: freqslider
                 from: 87.5
+                to: 108.0
                 value: 105.9
-                to: 108
+                stepSize: 0.1
                 Layout.fillWidth: true
+
+                // 1. When the user stops dragging (releases the handle), tune the radio
+                onPressedChanged: {
+                    if (!pressed) {
+                        console.log("Tuning to: " + value)
+                        // Call the C++ function
+                        sdrRadio.startRadio(value)
+                    }
+                }
             }
+
             TextField {
-                placeholderText: "Frequency"
-                Layout.fillWidth: true
+                id: freqtext
+                Layout.preferredWidth: 80 // Give it a fixed width so it doesn't jump around
+                text: freqslider.value.toFixed(1)
+
+                onEditingFinished: {
+                    var val = parseFloat(text)
+                    if (!isNaN(val) && val >= 87.5 && val <= 108.0) {
+                        freqslider.value = val
+                        // 2. Tune when typing is done (Enter pressed or focus lost)
+                        sdrRadio.startRadio(val)
+                    } else {
+                        // Reset text if invalid
+                        text = freqslider.value.toFixed(1)
+                    }
+                }
             }
         }
+
 
         // 2. The List (FIXED ANCHORS HERE)
         ListView {

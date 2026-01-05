@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(Car_Infotainment VERSION 1.0 LANGUAGES CXX C)
+project(Car_Infotainment VERSION 0.1 LANGUAGES CXX C)
 
 # ====================================================================
 #  1. GLOBAL SETTINGS
@@ -14,12 +14,17 @@ enable_testing()
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
 find_package(Qt6 6.5 COMPONENTS
-    Core Gui Network Qml Quick Quick3D Sql
+    Core Gui Network Multimedia Qml Quick Quick3D Sql
     WaylandCompositor LinguistTools Core5Compat
     REQUIRED
 )
 
 find_package(LibRTLSDR REQUIRED)
+
+# LibVLC
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBVLC REQUIRED libvlc)
+include_directories(${CMAKE_SOURCE_DIR}/deps/libvlcpp)
 
 qt_standard_project_setup()
 qt_policy(SET QTP0004 NEW)
@@ -44,6 +49,8 @@ set(PROJECT_SOURCES
     src/DatabaseManager.h src/DatabaseManager.cpp
     src/ProgramModel.h src/ProgramModel.cpp
     src/sdr/rtlsdr.h src/sdr/rtlsdr.cpp
+    src/internet_radio.h src/internet_radio.cpp
+    src/vlcplayer.h src/vlcplayer.cpp
 )
 
 # ====================================================================
@@ -86,6 +93,7 @@ qt_add_qml_module(Car_Infotainment_App
         Car_infotainmentContent/Taskbar.qml
         Car_infotainmentContent/Settings.qml
         Car_infotainmentContent/Databasetest.qml
+        Car_infotainmentContent/InternetRadio.qml
 
     RESOURCES
         qtquickcontrols2.conf
@@ -97,11 +105,13 @@ qt_add_qml_module(Car_Infotainment_App
         Images/pure-maps.png
         Car_infotainmentContent/icons/fan.png
         Car_infotainmentContent/icons/volume.png
-        Car_infotainmentContent/icons/Spotify.png
+        Car_infotainmentContent/icons/Spotify.svg
         Car_infotainmentContent/icons/map.png
         Car_infotainmentContent/icons/placeholder.png
         Car_infotainmentContent/icons/app-drawer.png
         Car_infotainmentContent/icons/settings.svg
+        Car_infotainmentContent/icons/folder.png
+        Car_infotainmentContent/icons/radio.png
         Car_infotainmentContent/images/urban_street_03_2k.hdr
 )
 # ====================================================================
@@ -114,9 +124,10 @@ target_include_directories(Car_Infotainment_App PRIVATE
 )
 
 target_link_libraries(Car_Infotainment_App PRIVATE
-    Qt6::Core Qt6::Gui Qt6::Qml Qt6::Network Qt6::Quick Qt6::Quick3D Qt6::Sql
+    Qt6::Core Qt6::Gui Qt6::Qml Qt6::Network Qt6::Multimedia Qt6::Quick Qt6::Quick3D Qt6::Sql
     Qt6::Core5Compat Qt6::WaylandCompositor
     Generated_QtQuick3D_Volvi
+    ${LIBVLC_LIBRARIES}
 )
 
 # ====================================================================

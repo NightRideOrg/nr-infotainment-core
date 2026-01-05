@@ -103,6 +103,7 @@ Window {
             // --- UPDATED WAYLAND COMPOSITOR ---
             WaylandCompositor {
                 id: comp
+                socketName: "car-display"
 
                 // The logical screen setup
                 WaylandOutput {
@@ -739,6 +740,9 @@ Window {
             case "database":
                 database_t.visible = !database_t.visible
                 break
+            case "iradio":
+                iradio.visible = !iradio.visible
+                break
             default:
                 console.warn("Unbekannter Item-Name: " + itemName)
             }
@@ -828,6 +832,15 @@ Window {
 
     Databasetest {
         id: database_t
+        visible: false
+        anchors.right: parent.right
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+    }
+
+    InternetRadio {
+        id: iradio
         visible: false
         anchors.right: parent.right
         anchors.left: parent.left

@@ -1,3 +1,7 @@
 [submodule "PCB/Car-infotainment-PCB"]
 	path = PCB/Car-infotainment-PCB
 	url = http://github.com/MaizeShark/Car-infotainment-PCB
+[submodule "deps/libvlcpp"]
+	path = deps/libvlcpp
+	url = https://github.com/videolan/libvlcpp
+	branch = master
