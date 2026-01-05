@@ -1,24 +1,48 @@
-## Build Instructions
+# Night Ride – Infotainment Core
 
-It is recommended to download the **Qt Online Installer** from:
-[https://www.qt.io/download-qt-installer-oss](https://www.qt.io/download-qt-installer-oss)
+This repository contains the **core infotainment application** for the
+**Night Ride** open-source automotive modernization project.
 
-Install Qt version **6.8.3** (or another version of your choice).
+The application is built with **Qt 6 / QML** and is intended to run on
+**embedded Linux systems** using **Wayland**.
 
-> ⚠️ If you choose a different version or installation path, you must adjust the `CMAKE_PREFIX_PATH` accordingly.
+It provides the foundation for:
+- vehicle HMI rendering
+- media and navigation integration
+- system UI and display logic
 
-Make sure to **install all required packages for your chosen Qt version**.
-If you want, you can try installing the packages one by one to identify which are actually needed.
-If you find a minimal set or discover missing dependencies, please consider opening an issue or pull request to improve this documentation.
+> ⚠️ This is **not a finished consumer product**.
+> It is an experimental, engineering-focused project.
 
-By default, it is assumed that Qt is installed to:
-`/home/[username]/Qt`
+---
 
-### Clone and Build
+## 🛠 Build Instructions
+
+It is recommended to install Qt using the **Qt Online Installer (OSS)**:
+https://www.qt.io/download-qt-installer-oss
+
+Install **Qt 6.8.3** (or another compatible Qt 6 version).
+
+> ⚠️ If you choose a different Qt version or installation path, you must
+> adjust `CMAKE_PREFIX_PATH` accordingly.
+
+Make sure all required Qt components for your chosen version are installed.
+If you discover a minimal dependency set or missing packages, please consider
+opening an issue or pull request.
+
+### Default Qt path
+```text
+/home/[username]/Qt
+```
+
+---
+
+## 📦 Clone and Build
 
 ```bash
-git clone https://github.com/MaizeShark/Car_Infotainment/
-cd Car_Infotainment
+git clone https://github.com/NightRideOrg/nr-infotainment-core.git
+cd nr-infotainment-core
+
 mkdir build && cd build
 
 cmake .. \
@@ -29,7 +53,7 @@ make -j$(nproc)
 
 ---
 
-## Running the Application
+## ▶ Running the Application
 
 ```bash
 ./Car_Infotainment_App
@@ -37,36 +61,39 @@ make -j$(nproc)
 
 ---
 
-## Wayland Compatibility for Other Applications
+## 🪟 Wayland compatibility notes
 
-You can run most Qt-based applications under Wayland if they support platform overrides.
-For example:
+Most Qt-based applications can be run under Wayland if they support
+platform overrides.
 
-* **pure-maps**:
-  Must be built manually. Follow the instructions at:
-  [https://github.com/rinigus/pure-maps/blob/master/Build.md](https://github.com/rinigus/pure-maps/blob/master/Build.md)
+### Examples
 
-  To run it under Wayland:
+**pure-maps**
+Should be built manually. See:
+[https://github.com/rinigus/pure-maps/blob/master/Build.md](https://github.com/rinigus/pure-maps/blob/master/Build.md)
 
-  ```bash
-  QT_QPA_PLATFORM=wayland pure-maps
-  ```
+Run under Wayland:
 
-* **Spotify**:
-  Spotify (Electron-based) can be run with Wayland support as follows:
+```bash
+QT_QPA_PLATFORM=wayland pure-maps
+```
 
+**Spotify (Electron-based)**
 
+```bash
+spotify --enable-features=UseOzonePlatform --ozone-platform=wayland
+```
 
-  ```bash
-  spotify --enable-features=UseOzonePlatform --ozone-platform=wayland
-  ```
+> Application behavior under Wayland depends on compositor and system setup.
 
-> Note: Application behavior under Wayland may vary depending on system configuration and compositor support.
+> [!Note]
+> This program uses the [IVI Protocol](https://wayland.pages.freedesktop.org/weston/toc/ivi-shell.html) 
+> and the [Qt IVI Compositor](https://doc.qt.io/qt-6/qtwaylandcompositor-ivi-compositor-example.html), 
+> so compatibility may vary even more depending on the compositor.
 
 ---
-# Background Image Requirements
 
-* The background image must have a **minimum resolution of 1920×1080 pixels**.
-* The image will be **cropped while preserving its aspect ratio**.
+## 🖼 Background image requirements
 
-
+* Minimum resolution: **1920×1080**
+* Images are cropped while preserving aspect ratio
