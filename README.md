@@ -21,7 +21,7 @@ It provides the foundation for:
 It is recommended to install Qt using the **Qt Online Installer (OSS)**:
 https://www.qt.io/download-qt-installer-oss
 
-Install **Qt 6.8.3** (or another compatible Qt 6 version).
+Install **Qt 6.9.3** (or another compatible Qt 6 version).
 
 > ⚠️ If you choose a different Qt version or installation path, you must
 > adjust `CMAKE_PREFIX_PATH` accordingly.
@@ -46,7 +46,7 @@ cd nr-infotainment-core
 mkdir build && cd build
 
 cmake .. \
-  -DCMAKE_PREFIX_PATH=~/Qt/6.8.3/gcc_64
+  -DCMAKE_PREFIX_PATH=~/Qt/6.9.3/gcc_64
 
 make -j$(nproc)
 ```
@@ -56,7 +56,7 @@ make -j$(nproc)
 ## ▶ Running the Application
 
 ```bash
-./Car_Infotainment_App
+./nightride-infotainment
 ```
 
 ---

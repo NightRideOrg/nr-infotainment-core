@@ -7,8 +7,7 @@ VlcPlayer::VlcPlayer(QObject *parent) : QObject(parent)
     m_instance = new VLC::Instance(0, nullptr);
 
     // Set user agent and app ID
-    m_instance->setUserAgent( "Car-Infotainment/1.0", "Car-Infotainment" );
-
+    m_instance->setUserAgent("Night Ride Infotainment", "NightRide/0.1 libVLC");
 
     // 2. Create an empty Media Player
     m_player = new VLC::MediaPlayer(*m_instance);

@@ -167,7 +167,7 @@ Rectangle {
                 width: taskbarRoot.visibleIconDimension  // Bild hat die gewünschte sichtbare Größe
                 height: taskbarRoot.visibleIconDimension // Bild hat die gewünschte sichtbare Größe
                 anchors.centerIn: parent                 // Zentriert im größeren Container
-                source: "qrc:/Car_infotainmentContent/icons/app-drawer.png"
+                source: "qrc:/NightRideContent/icons/app-drawer.png"
                 fillMode: Image.PreserveAspectFit
                 smooth: true
                 mipmap: true

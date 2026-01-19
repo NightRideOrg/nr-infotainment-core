@@ -45,7 +45,7 @@ QString InternetRadio::baseUrl() const {
 QNetworkRequest InternetRadio::createNetworkRequest(const QUrl &url)
 {
     QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::UserAgentHeader, "Car Infotainment App/1.0");
+    request.setHeader(QNetworkRequest::UserAgentHeader, "NightRide/0.1");
     return request;
 }
 

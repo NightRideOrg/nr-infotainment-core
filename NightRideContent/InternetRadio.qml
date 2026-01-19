@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtMultimedia
-import Car.Multimedia 1.0
+import NightRide.Multimedia 1.0
 
 Rectangle {
     id: root
@@ -181,7 +181,7 @@ Rectangle {
                         // 1. Background
                         Image {
                             anchors.fill: parent
-                            source: "qrc:/Car_infotainmentContent/icons/placeholder.png"
+                            source: "qrc:/NightRideContent/icons/placeholder.png"
                             fillMode: Image.PreserveAspectFit
                             opacity: 0.3
                         }

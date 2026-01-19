@@ -509,7 +509,7 @@ Window {
                     environment: ExtendedSceneEnvironment {
                         backgroundMode: SceneEnvironment.SkyBox
                         lightProbe: Texture {
-                            source: "qrc:/Car_infotainmentContent/images/urban_street_03_2k.hdr"
+                            source: "qrc:/NightRideContent/images/urban_street_03_2k.hdr"
                         }
 
                         glowEnabled: true
@@ -620,7 +620,7 @@ Window {
 
             Image {
                 id: fanImage
-                source: "qrc:/Car_infotainmentContent/icons/fan.png"
+                source: "qrc:/NightRideContent/icons/fan.png"
                 sourceSize.height: 65
                 sourceSize.width: 65
                 width: 65
@@ -682,7 +682,7 @@ Window {
 
             Image {
                 id: speakerImage
-                source: "qrc:/Car_infotainmentContent/icons/volume.png"
+                source: "qrc:/NightRideContent/icons/volume.png"
                 sourceSize.height: 65
                 sourceSize.width: 65
                 width: 65
@@ -793,7 +793,7 @@ Window {
                 if (text.length > 0) {
                     appProvider.addApp(
                                 text,
-                                "qrc:/Car_infotainmentContent/icons/placeholder.png",
+                                "qrc:/NightRideContent/icons/placeholder.png",
                                 "#FF0000")
                 } else {
                     console.log("Bitte eine App-ID eingeben.")
@@ -807,12 +807,12 @@ Window {
                 if (text.length > 0 && text !== "settings") {
                     myAppTaskbar.addIcon(
                                 text,
-                                "qrc:/Car_infotainmentContent/icons/placeholder.png",
+                                "qrc:/NightRideContent/icons/placeholder.png",
                                 "dodgerblue")
                 } else if (text === "settings") {
                     myAppTaskbar.addIcon(
                                 "Settings",
-                                "qrc:/Car_infotainmentContent/icons/settings.svg",
+                                "qrc:/NightRideContent/icons/settings.svg",
                                 "grey")
                 } else {
                     console.log("Bitte eine App-ID eingeben.")
@@ -851,7 +851,7 @@ Window {
     Component.onCompleted: {
         updateBlinker() // <-- Blinker-Status initial prüfen
         var testImage = Qt.resolvedUrl(
-                    "qrc:/Car_infotainmentContent/icons/map.png")
+                    "qrc:/NightRideContent/icons/map.png")
         console.log("Test image URL:", testImage)
     }
 }

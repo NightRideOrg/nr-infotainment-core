@@ -1,16 +1,16 @@
 import QmlProject
 
 Project {
-    mainFile: "Car_infotainmentContent/Main.qml"
-    mainUiFile: "Car_infotainmentContent/Screen01.ui.qml"
+    mainFile: "NightRideContent/Main.qml"
+    mainUiFile: "NightRideContent/Screen01.ui.qml"
 
     /* Include .qml, .js, and image files from current directory and subdirectories */
     QmlFiles {
-        directory: "Car_infotainment"
+        directory: "NightRide"
     }
 
     QmlFiles {
-        directory: "Car_infotainmentContent"
+        directory: "NightRideContent"
     }
 
     QmlFiles {
@@ -18,15 +18,15 @@ Project {
     }
 
     JavaScriptFiles {
-        directory: "Car_infotainment"
+        directory: "NightRide"
     }
 
     JavaScriptFiles {
-        directory: "Car_infotainmentContent"
+        directory: "NightRideContent"
     }
 
     ImageFiles {
-        directory: "Car_infotainmentContent"
+        directory: "NightRideContent"
     }
 
     ImageFiles {
@@ -98,7 +98,7 @@ Project {
     importPaths: [ "." ]
 
     /* Required for deployment */
-    targetDirectory: "/opt/Car_infotainment"
+    targetDirectory: "/opt/nightride-infotainment"
 
 
     qdsVersion: "4.7"
@@ -111,10 +111,10 @@ Project {
     /* args: Specifies command line arguments for qsb tool to generate shaders.
        files: Specifies target files for qsb tool. If path is included, it must be relative to this file.
               Wildcard '*' can be used in the file name part of the path.
-              e.g. files: [ "Car_infotainmentContent/shaders/*.vert", "*.frag" ]  */
+              e.g. files: [ "NightRideContent/shaders/*.vert", "*.frag" ]  */
     ShaderTool {
         args: "-s --glsl \"100 es,120,150\" --hlsl 50 --msl 12"
-        files: [ "Car_infotainmentContent/shaders/*" ]
+        files: [ "NightRideContent/shaders/*" ]
     }
 
     multilanguageSupport: true

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(Car_Infotainment VERSION 0.1 LANGUAGES CXX C)
+project(NightRideInfotainment VERSION 0.1 LANGUAGES CXX C)
 
 # ====================================================================
 #  1. GLOBAL SETTINGS
@@ -58,7 +58,7 @@ set(PROJECT_SOURCES
 # ====================================================================
 # WIN32: Hides the command prompt on Windows
 # MACOSX_BUNDLE: Creates a proper .app bundle on macOS
-qt_add_executable(Car_Infotainment_App
+qt_add_executable(nightride-infotainment
     MANUAL_FINALIZATION
     WIN32
     MACOSX_BUNDLE
@@ -70,16 +70,16 @@ qt_add_executable(Car_Infotainment_App
 # ====================================================================
 # Ensure code quality by turning on warnings
 if(MSVC)
-    target_compile_options(Car_Infotainment_App PRIVATE /W4)
+    target_compile_options(nightride-infotainment PRIVATE /W4)
 else()
-    target_compile_options(Car_Infotainment_App PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(nightride-infotainment PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 # ====================================================================
 #  6. QT 6 QML MODULE
 # ====================================================================
-qt_add_qml_module(Car_Infotainment_App
-    URI "Car_Infotainment"
+qt_add_qml_module(nightride-infotainment
+    URI "NightRide.Infotainment"
     VERSION 1.0
     RESOURCE_PREFIX "/"
 
@@ -87,43 +87,44 @@ qt_add_qml_module(Car_Infotainment_App
     NO_RESOURCE_TARGET_PATH
 
     QML_FILES
-        Car_infotainmentContent/Main.qml
-        Car_infotainmentContent/AppMenuGridView.qml
-        Car_infotainmentContent/Climate.qml
-        Car_infotainmentContent/Taskbar.qml
-        Car_infotainmentContent/Settings.qml
-        Car_infotainmentContent/Databasetest.qml
-        Car_infotainmentContent/InternetRadio.qml
+        NightRideContent/Main.qml
+        NightRideContent/AppMenuGridView.qml
+        NightRideContent/Climate.qml
+        NightRideContent/Taskbar.qml
+        NightRideContent/Settings.qml
+        NightRideContent/Databasetest.qml
+        NightRideContent/InternetRadio.qml
 
     RESOURCES
         qtquickcontrols2.conf
-        Car_infotainmentContent/qmldir
+        NightRideContent/qmldir
         Abel/Abel-Regular.ttf
         # Note: Ideally, avoid spaces in filenames for cross-platform safety
         "Images/1239183-3840x2160-desktop-4k-green-forest-background-photo.jpg"
         Images/pure-maps2.png
         Images/pure-maps.png
-        Car_infotainmentContent/icons/fan.png
-        Car_infotainmentContent/icons/volume.png
-        Car_infotainmentContent/icons/Spotify.svg
-        Car_infotainmentContent/icons/map.png
-        Car_infotainmentContent/icons/placeholder.png
-        Car_infotainmentContent/icons/app-drawer.png
-        Car_infotainmentContent/icons/settings.svg
-        Car_infotainmentContent/icons/folder.png
-        Car_infotainmentContent/icons/radio.png
-        Car_infotainmentContent/images/urban_street_03_2k.hdr
+        NightRideContent/icons/fan.png
+        NightRideContent/icons/volume.png
+        NightRideContent/icons/Spotify.svg
+        NightRideContent/icons/map.png
+        NightRideContent/icons/placeholder.png
+        NightRideContent/icons/app-drawer.png
+        NightRideContent/icons/settings.svg
+        NightRideContent/icons/folder.png
+        NightRideContent/icons/radio.png
+        NightRideContent/icons/NightRide.png
+        NightRideContent/images/urban_street_03_2k.hdr
 )
 # ====================================================================
 #  7. LINKING & INCLUDE
 # ====================================================================
-target_include_directories(Car_Infotainment_App PRIVATE
+target_include_directories(nightride-infotainment PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_BINARY_DIR}
     ${LIBRTLSDR_INCLUDE_DIRS}
 )
 
-target_link_libraries(Car_Infotainment_App PRIVATE
+target_link_libraries(nightride-infotainment PRIVATE
     Qt6::Core Qt6::Gui Qt6::Qml Qt6::Network Qt6::Multimedia Qt6::Quick Qt6::Quick3D Qt6::Sql
     Qt6::Core5Compat Qt6::WaylandCompositor
     Generated_QtQuick3D_Volvi
@@ -133,7 +134,7 @@ target_link_libraries(Car_Infotainment_App PRIVATE
 # ====================================================================
 #  8. TRANSLATIONS
 # ====================================================================
-qt_add_translations(Car_Infotainment_App PREFIX "translations" TS_FILES translations/app_de.ts)
+qt_add_translations(nightride-infotainment PREFIX "translations" TS_FILES translations/app_de.ts)
 
 # ====================================================================
 #  9. INSTALLATION & DEPLOYMENT (The Magic Part)
@@ -141,7 +142,7 @@ qt_add_translations(Car_Infotainment_App PREFIX "translations" TS_FILES translat
 include(GNUInstallDirs)
 
 # 1. Standard Install
-install(TARGETS Car_Infotainment_App
+install(TARGETS nightride-infotainment
     BUNDLE DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -153,7 +154,7 @@ install(TARGETS Car_Infotainment_App
 # so the Artifact uploaded by GitHub Actions actually runs!
 if(WIN32 OR APPLE)
     qt_generate_deploy_app_script(
-        TARGET Car_Infotainment_App
+        TARGET nightride-infotainment
         OUTPUT_SCRIPT deploy_script
         NO_UNSUPPORTED_PLATFORM_ERROR
     )
@@ -161,4 +162,4 @@ if(WIN32 OR APPLE)
 endif()
 
 # Finalize the target (required because we used MANUAL_FINALIZATION)
-qt_finalize_executable(Car_Infotainment_App)
+qt_finalize_executable(nightride-infotainment)
